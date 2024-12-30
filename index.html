@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araba Öneri Sistemi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+            color: white;
+        }
+        header {
+            background-color: #142850;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        main {
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #00a8cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #007ea7;
+        }
+        h2 {
+            margin-top: 40px;
+        }
+        #carList {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .car {
+            margin: 10px 0;
+        }
+        .car a {
+            color: #00d9ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .car a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Araba Öneri Sistemi</h1>
+    </header>
+    <main>
+        <label for="minBudget">Minimum Bütçe: </label>
+        <input type="number" id="minBudget" placeholder="Örnek: 200000">
+
+        <label for="maxBudget">Maksimum Bütçe: </label>
+        <input type="number" id="maxBudget" placeholder="Örnek: 500000">
+
+        <button onclick="filterCars()">Önerileri Göster</button>
+
+        <h2>Önerilen Arabalar</h2>
+        <div id="carList">
+            <!-- Öneriler buraya eklenecek -->
+        </div>
+    </main>
+
+    <script>
+        // Araba bilgileri (manuel olarak eklenebilir)
+        const cars = [
+            { name: "Toyota Corolla", price: 400000, link: "https://www.sahibinden.com/toyota-corolla" },
+            { name: "Honda Civic", price: 450000, link: "https://www.sahibinden.com/honda-civic" },
+            { name: "BMW 3 Serisi", price: 800000, link: "https://www.sahibinden.com/bmw-3-serisi" },
+            { name: "Mercedes-Benz A Serisi", price: 850000, link: "https://www.sahibinden.com/mercedes-benz-a-serisi" },
+            { name: "Audi A4", price: 950000, link: "https://www.sahibinden.com/audi-a4" },
+            { name: "Volkswagen Passat", price: 500000, link: "https://www.sahibinden.com/volkswagen-passat" },
+            { name: "Ford Focus", price: 480000, link: "https://www.sahibinden.com/ford-focus" },
+            { name: "Hyundai Elantra", price: 450000, link: "https://www.sahibinden.com/hyundai-elantra" },
+            { name: "Skoda Superb", price: 650000, link: "https://www.sahibinden.com/skoda-superb" },
+            { name: "Kia Optima", price: 550000, link: "https://www.sahibinden.com/kia-optima" },
+            { name: "Renault Megane", price: 420000, link: "https://www.sahibinden.com/renault-megane" },
+            { name: "Peugeot 508", price: 700000, link: "https://www.sahibinden.com/peugeot-508" },
+            { name: "Lexus ES", price: 1200000, link: "https://www.sahibinden.com/lexus-es" },
+            { name: "Tesla Model 3", price: 1400000, link: "https://www.sahibinden.com/tesla-model-3" },
+            { name: "Jaguar XF", price: 1600000, link: "https://www.sahibinden.com/jaguar-xf" },
+            { name: "Volvo S90", price: 1800000, link: "https://www.sahibinden.com/volvo-s90" },
+            { name: "Porsche Panamera", price: 4000000, link: "https://www.sahibinden.com/porsche-panamera" },
+            { name: "Maserati Ghibli", price: 5000000, link: "https://www.sahibinden.com/maserati-ghibli" },
+            { name: "Ferrari Roma", price: 8000000, link: "https://www.sahibinden.com/ferrari-roma" },
+            { name: "Lamborghini Huracan", price: 10000000, link: "https://www.sahibinden.com/lamborghini-huracan" },
+            { name: "Fiat Egea", price: 200000, link: "https://www.sahibinden.com/fiat-egea" },
+            { name: "Dacia Sandero", price: 220000, link: "https://www.sahibinden.com/dacia-sandero" },
+            { name: "Opel Corsa", price: 250000, link: "https://www.sahibinden.com/opel-corsa" },
+            { name: "Ford Fiesta", price: 300000, link: "https://www.sahibinden.com/ford-fiesta" },
+            { name: "Renault Clio", price: 350000, link: "https://www.sahibinden.com/renault-clio" },
+            { name: "Hyundai i10", price: 120000, link: "https://www.sahibinden.com/hyundai-i10" },
+            { name: "Fiat Panda", price: 100000, link: "https://www.sahibinden.com/fiat-panda" },
+            { name: "Suzuki Alto", price: 90000, link: "https://www.sahibinden.com/suzuki-alto" },
+            { name: "Chevrolet Spark", price: 140000, link: "https://www.sahibinden.com/chevrolet-spark" },
+            { name: "Peugeot 107", price: 150000, link: "https://www.sahibinden.com/peugeot-107" },
+            { name: "üzülme elbet seninde olacak", price:0, link: "https://image.hurimg.com/i/hurriyet/75/750x422/66cee49c601c04688fba5a95.jpg"}
+        ];
+
+     function filterCars() {
+            const minBudget = document.getElementById('minBudget').value;
+            const maxBudget = document.getElementById('maxBudget').value;
+            const carList = document.getElementById('carList');
+
+            // Listeyi temizle
+            carList.innerHTML = '';
+
+            // Bütçeye uygun arabaları filtrele
+            const filteredCars = cars.filter(car => car.price >= minBudget && car.price <= maxBudget);
+
+            if (filteredCars.length === 0) {
+                carList.innerHTML = '<p>Bütçenize uygun araç bulunamadı.</p>';
+                return;
+            }
+
+            // Arabaları listeye ekle
+            filteredCars.forEach(car => {
+                const carElement = document.createElement('div');
+                carElement.className = 'car';
+                carElement.innerHTML = `<a href="${car.link}" target="_blank">${car.name} - ${car.price} TL</a>`;
+                carList.appendChild(carElement);
+            });
+        }
+    </script>
+</body>
+</html>
